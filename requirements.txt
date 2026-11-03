@@ -1,2 +1,7 @@
-matplotlib
 numpy
+pandas
+matplotlib
+opencv-python
+mediapipe
+scikit-learn
+scipy
