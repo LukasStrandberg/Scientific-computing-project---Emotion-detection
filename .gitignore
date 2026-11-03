@@ -1,4 +1,6 @@
+labeled_data/
 data/
+
 *.task
 
 # Byte-compiled / optimized / DLL files
