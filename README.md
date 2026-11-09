@@ -9,3 +9,6 @@ pip install -r requirements.txt
 
 ## ElderReact github
 https://github.com/Mayer123/ElderReact
+
+## MAE-DFER
+https://github.com/sunlicai/MAE-DFER/tree/master
