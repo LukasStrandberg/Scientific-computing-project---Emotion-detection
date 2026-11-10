@@ -5,3 +5,8 @@ opencv-python
 mediapipe
 scikit-learn
 scipy
+torch
+torchvision
+timm==0.4.12
+einops==0.6.1
+tensorboardX
