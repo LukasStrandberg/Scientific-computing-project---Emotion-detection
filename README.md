@@ -12,3 +12,5 @@ https://github.com/Mayer123/ElderReact
 
 ## MAE-DFER
 https://github.com/sunlicai/MAE-DFER/tree/master
+
+to use their pre trained model you have to clone their repository: git clone https://github.com/sunlicai/MAE-DFER.git
