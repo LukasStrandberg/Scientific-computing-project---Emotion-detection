@@ -1,0 +1,15 @@
+# Packages for the S2D track. Install PyTorch FIRST (CUDA build, see s2d/README.md),
+# then: pip install -r s2d/requirements-s2d.txt
+timm==0.6.13          # S2D's model code is written against this exact timm version
+einops
+numpy
+pandas
+pillow
+opencv-python
+scikit-learn
+scikit-image
+scipy
+tensorboardX
+matplotlib
+tqdm
+batch-face            # GPU RetinaFace for the face-cropping step

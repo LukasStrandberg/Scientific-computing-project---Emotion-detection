@@ -1,0 +1,32 @@
+checkpoint: external/S2D/ckpts/MAFW/without_oversampler/split01_checkpoint-best.pth
+annotations: data/processed/MAFW/anno/set_1/test.csv
+clips evaluated: 1839
+time: 508 s
+UAR: 30.39
+WAR: 44.21
+
+Recall per class:
+  anger            32.01  (n=278)
+  anxiety          13.04  (n=184)
+  contempt          0.00  (n=48)
+  disappointment    0.00  (n=37)
+  disgust           4.69  (n=128)
+  fear              5.60  (n=125)
+  happiness        84.74  (n=249)
+  helplessness      0.00  (n=53)
+  neutral          75.88  (n=228)
+  sadness          61.56  (n=294)
+  surprise         56.74  (n=215)
+
+Confusion matrix (rows = true, cols = predicted, order as above):
+[[ 89  12   0   0   4   1   9   0  99  16  48]
+ [ 16  24   0   0   1   5   5   0  69  30  34]
+ [  1   0   0   0   0   0  12   0  28   2   5]
+ [  0   1   0   0   0   0   0   0  23   7   6]
+ [ 15   8   0   0   6   1   7   0  56  23  12]
+ [  3   4   0   0   0   7   2   0  18  28  63]
+ [  1   0   0   0   0   0 211   0  28   5   4]
+ [  0   6   0   0   1   0   5   0  27   8   6]
+ [  5   6   0   0   0   0   7   0 173   8  29]
+ [  3   9   0   0   1   2   8   0  76 181  14]
+ [  7   9   0   0   1   6  10   0  45  15 122]]
