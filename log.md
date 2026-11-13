@@ -19,3 +19,7 @@ Clustering med Autoencoders och T-sne. Andra sätt för att visualisera och för
 
 ## 2026/11/12
 Lyckades få predictions på vår riktiga testdata från MAE-DFER finjusterade modell från ELderReact data samt den färdigtränade MAE-DFER. Resultat är inte superbra, stor majoritet av känslorna den fångar är "ledsen", vilket är svårt då hon har vissa ledsna tendenser utan att hon nödvändigtvis är ledsen. Vi kan även se vad modellen kollar på och det är inte alltid ansiktet, detta måste undersökas mera. Funderar även på att ta bort ett slags "medelvärde" av ansiktet, för att motverka hennes ledsna tendenser.
+
+## 2026/11/13
+Läser på mer om S2D och S4D från Chen et. al
+
