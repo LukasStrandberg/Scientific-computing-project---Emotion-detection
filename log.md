@@ -28,4 +28,5 @@ Körde den finjusterade MAE-DFER-modellen på på olika samplingar av testvideon
 
 ## 2026/11/17
 Skriver på rapport och spånar ideer med gruppen.
+Läser fler artiklar för att få inspiration till modeller och för att hitta relevanta dataset. Bland annat undersöker "Meco data set".  
 
