@@ -23,3 +23,9 @@ Lyckades få predictions på vår riktiga testdata från MAE-DFER finjusterade m
 ## 2026/11/13
 Läser på mer om S2D och S4D från Chen et. al
 
+## 2026/11/16
+Körde den finjusterade MAE-DFER-modellen på på olika samplingar av testvideon, landade i att sampla 1 sekund långa videor med överlapp och på så sätt fånga alla gånger patienten ändra känsla.
+
+## 2026/11/17
+Skriver på rapport och spånar ideer med gruppen.
+
