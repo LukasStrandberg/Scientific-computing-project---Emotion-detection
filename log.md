@@ -28,5 +28,9 @@ Körde den finjusterade MAE-DFER-modellen på på olika samplingar av testvideon
 
 ## 2026/11/17
 Skriver på rapport och spånar ideer med gruppen.
-Läser fler artiklar för att få inspiration till modeller och för att hitta relevanta dataset. Bland annat undersöker "Meco data set".  
+Läser fler artiklar för att få inspiration till modeller och för att hitta relevanta dataset. Bland annat undersöker "Meco data set". Tränade även om MAE-DFER men med yolo och med tightare inramning av ansiktet, vilket gav liten förbättring.
+
+## 2026/11/18
+Läser på om pappret MECO: A Multimodal Dataset for Emotion and Cognitive
+Understanding in Older Adults.
 
