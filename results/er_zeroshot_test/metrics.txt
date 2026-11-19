@@ -1,0 +1,26 @@
+checkpoint: external/S2D/ckpts/MAFW/without_oversampler/split01_checkpoint-best.pth
+annotations: data/processed/ElderReact/anno/test.csv
+frames: data/processed/ElderReact/faces_224
+mode: er-zeroshot   sampling: consecutive   windows: 2
+clips evaluated: 353
+time: 50 s
+
+Per emotion (n = clips where the emotion is present):
+  emotion          n     AUC      F1  threshold
+  anger           76   61.44   35.63     0.0566
+  disgust         63   60.77   31.72     0.0520
+  fear            29   62.28   15.60     0.0287
+  happiness      187   81.55   78.06     0.1046
+  sadness         66   54.05   20.17     0.1273
+  surprise       121   52.50   51.21     0.0293
+  MEAN                 62.10   38.73
+  (thresholds loaded from --thresholds)
+
+Clips with exactly one emotion: 151 (side metric, few clips per class)
+  accuracy (WAR): 52.32   mean per-emotion recall (UAR): 19.25
+    anger         21.43  (n=14)
+    disgust        0.00  (n=7)
+    fear           0.00  (n=1)
+    happiness     76.04  (n=96)
+    sadness        6.25  (n=16)
+    surprise      11.76  (n=17)

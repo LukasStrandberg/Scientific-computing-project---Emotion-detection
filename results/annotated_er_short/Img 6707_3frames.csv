@@ -1,0 +1,4 @@
+moment,frame,time_s,predicted,anger,disgust,fear,happiness,sadness,surprise
+0.25,6725,224.18,happiness,0.3072,0.1515,0.4261,0.9023,0.2838,0.7040
+0.5,13450,448.35,sadness,0.5177,0.1973,0.3197,0.3256,0.6411,0.3512
+0.75,20174,672.50,happiness,0.3665,0.2063,0.3909,0.8807,0.4077,0.5513

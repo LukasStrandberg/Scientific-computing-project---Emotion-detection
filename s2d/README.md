@@ -7,6 +7,10 @@ claude.ai Project doc `claude/S2D_pipeline_plan.md`.
 We reuse the official code (github.com/MSA-LMC/S2D) unchanged where possible and only
 add our own scripts in this folder.
 
+**Easiest way to run everything: the notebook `s2d/S2D_pipeline.ipynb`** - works in Google
+Colab (data on Google Drive, instructions at the top of the notebook) and locally with the
+`venv-s2d` kernel. The sections below are the same steps as terminal commands.
+
 ## 1. One-time setup (Windows, plain venv, no conda)
 
 From the repo root, in PowerShell:
@@ -66,6 +70,52 @@ evaluates exactly those. Prints UAR/WAR; writes `predictions.csv`, `features.npz
 everything runs and gives a rough sense of accuracy (paper: about 56% WAR on the full test set).
 If you get "CUDA out of memory", add `--batch 2`.
 
+Other options of `evaluate.py` (see the top of the file):
+- `--sampling uniform` spreads each 16-frame window over the whole clip instead of 16 consecutive frames.
+- `--mode er-zeroshot` runs the MAFW model on ElderReact and scores the 6 shared emotions
+  (per-emotion AUC and F1, plus accuracy on clips with exactly one emotion). Run it on `dev.csv` first;
+  that writes `thresholds.json`, which you pass to the test run with `--thresholds`.
+
+## 4. ElderReact fine-tuning
+
+Default protocol (aligned with the MAE-DFER track): official train + dev are pooled and
+re-split 85 / 15 % into train / validation (fixed seed 42, lists written to the output
+folder; `--split-file` takes an existing validation list instead, `--split official` uses
+the files as given), best epoch by validation loss, early stopping after 8 epochs without
+improvement. The official test set is never used for training or selection.
+
+```powershell
+python s2d/train_elderreact.py --out results/er_ft_pooled --lr 5e-5 --warmup 1
+python s2d/evaluate.py --mode er --sampling uniform --ckpt results/er_ft_pooled/best.pth --anno results/er_ft_pooled/val_split.csv --frames data/processed/ElderReact/faces_224 --out results/er_ft_pooled_val
+python s2d/evaluate.py --mode er --sampling uniform --ckpt results/er_ft_pooled/best.pth --anno data/processed/ElderReact/anno/test.csv --frames data/processed/ElderReact/faces_224 --out results/er_ft_pooled_test --thresholds results/er_ft_pooled_val/thresholds.json
+```
+
+Earlier runs on the official split (before aligning with the MAE-DFER track):
+
+```powershell
+python s2d/train_elderreact.py --out results/er_ft --split official --select auc --patience 0   # ~2.5 h on the 3060
+python s2d/evaluate.py --mode er --sampling uniform --ckpt results/er_ft/best.pth --anno data/processed/ElderReact/anno/dev.csv --frames data/processed/ElderReact/faces_224 --out results/er_ft_dev
+python s2d/evaluate.py --mode er --sampling uniform --ckpt results/er_ft/best.pth --anno data/processed/ElderReact/anno/test.csv --frames data/processed/ElderReact/faces_224 --out results/er_ft_test --thresholds results/er_ft_dev/thresholds.json
+```
+
+## 5. Figures
+
+```powershell
+# t-SNE cluster plot, before vs after ElderReact fine-tuning (CPU, ~15 s)
+python s2d/plot_tsne.py --inputs results/er_zeroshot_uni_test/features.npz results/er_ft_test/features.npz --titles "Before (MAFW model)" "After ElderReact fine-tuning" --out results/tsne_elderreact.png
+
+# 3 frames (25/50/75 %) with face box and predicted emotions, per video
+python s2d/annotate_video.py --mode er --ckpt results/er_ft_short/best.pth --video "data/AlzheimerPatient_Data/*.mp4" --out results/annotated_er
+
+# emotion-over-time timeline, both models. --preset s2d (default): 3 s windows every 1 s, smoothed;
+# --preset maedfer: 1 s windows every 0.8 s, unsmoothed (same as the MAE-DFER track)
+python s2d/timeline_video.py --video "data/AlzheimerPatient_Data/*.mp4" --er-ckpt results/er_ft_short/best.pth --mafw-ckpt external/S2D/ckpts/MAFW/without_oversampler/split01_checkpoint-best.pth --out results/timeline
+
+# compare ElderReact models on the test set with 95 % bootstrap intervals (AUC, mAP, F1 tuned, F1@0.5);
+# --runs also takes CSVs in the shared layout described at the top of compare_runs.py (e.g. MAE-DFER predictions)
+python s2d/compare_runs.py --runs results/er_zeroshot_uni_test results/er_ft_test results/er_ft_short_test results/er_ft_head_test --names "before (MAFW)" "fine-tuned 30 ep" "fine-tuned 10 ep" "classifier only" --out results/compare_elderreact.txt
+```
+
 ### What the scripts produce
 | Output | Content |
 |---|---|
@@ -78,7 +128,15 @@ If you get "CUDA out of memory", add `--batch 2`.
 - [x] Face cropping (tested on 3 MAFW + 2 ElderReact clips)
 - [x] Official S2D model builds and runs with PyTorch 2.x + timm 0.6.13
 - [x] Evaluation script (official 2-window test protocol, saves features for t-SNE); checkpoint keys verified to match the model
-- [ ] Smoke test: released MAFW checkpoint on a MAFW subset (local 3060)
-- [ ] ElderReact multi-label fine-tuning
-- [ ] t-SNE before/after ElderReact
-- [ ] Patient videos: sliding windows, timeline, 3 annotated frames
+- [x] Smoke test + full fold-1 test of the released MAFW model: 44.21 WAR / 30.39 UAR (deepface-style crops)
+- [x] Frame-sampling test: uniform 48.18 WAR / 33.59 UAR on MAFW fold 1 (vs 44.21 / 30.39 consecutive)
+- [x] ElderReact zero-shot (uniform): test mean AUC 63.69, mean F1 40.81
+- [x] t-SNE plot script (`plot_tsne.py`), tested on real features
+- [x] 3-frame annotation script (`annotate_video.py`), tested on sample clips
+- [x] ElderReact fine-tuning: 30 ep / 10 ep (chosen: `results/er_ft_short`) / classifier only; test mean AUC 63.7 -> 66.4
+- [x] t-SNE before/after ElderReact (silhouette -0.118 -> -0.054, 30-epoch model)
+- [x] Patient videos: 3 annotated frames
+- [x] Patient videos: timeline (`timeline_video.py`), presets for both window settings
+- [x] Aligned with the MAE-DFER track: pooled split, validation-loss selection + early stopping, mAP / F1@0.5
+- [x] Notebook for Colab and local runs (`S2D_pipeline.ipynb`)
+- [ ] Re-train with the pooled split (exact MAE-DFER validation list when available)

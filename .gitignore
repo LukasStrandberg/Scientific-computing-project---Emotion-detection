@@ -227,3 +227,5 @@ __marimo__/
 # S2D track
 venv-s2d/
 external/
+*.pth
+*.tar

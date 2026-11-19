@@ -1,0 +1,26 @@
+checkpoint: results/er_ft/best.pth
+annotations: data/processed/ElderReact/anno/test.csv
+frames: data/processed/ElderReact/faces_224
+mode: er   sampling: uniform   windows: 2
+clips evaluated: 353
+time: 50 s
+
+Per emotion (n = clips where the emotion is present):
+  emotion          n     AUC      F1  threshold
+  anger           76   65.30   40.33     0.3966
+  disgust         63   60.04   32.32     0.3988
+  fear            29   65.42   25.88     0.4865
+  happiness      187   75.67   74.19     0.1332
+  sadness         66   65.13   33.82     0.7384
+  surprise       121   58.21   52.00     0.3379
+  MEAN                 64.96   43.09
+  (thresholds loaded from --thresholds)
+
+Clips with exactly one emotion: 151 (side metric, few clips per class)
+  accuracy (WAR): 48.34   mean per-emotion recall (UAR): 33.69
+    anger         50.00  (n=14)
+    disgust       28.57  (n=7)
+    fear           0.00  (n=1)
+    happiness     55.21  (n=96)
+    sadness       62.50  (n=16)
+    surprise       5.88  (n=17)
