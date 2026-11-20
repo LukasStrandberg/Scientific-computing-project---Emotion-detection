@@ -34,3 +34,5 @@ Läser fler artiklar för att få inspiration till modeller och för att hitta r
 Läser på om pappret MECO: A Multimodal Dataset for Emotion and Cognitive
 Understanding in Older Adults.
 
+## 2026/11/20
+Skrivit lite teori och clustrat per video.
