@@ -1,7 +1,22 @@
+# One environment for all three tracks.
+# Install PyTorch FIRST (local: the command from https://pytorch.org/get-started/locally for your CUDA;
+# Colab: already installed - do not reinstall), then:  pip install -r requirements.txt
+timm==0.6.13          # S2D model code is written against timm 0.6.x; MAE-DFER runs on it unchanged (see third_party/mae_dfer/NOTICE.md)
+einops
+batch-face            # RetinaFace, the shared face detector
+ultralytics           # YOLOv8n-face, the alternative detector (only imported when selected)
+mediapipe             # FaceLandmarker blendshapes for the clustering track
+opencv-python
 numpy
 pandas
-matplotlib
-opencv-python
-mediapipe
-scikit-learn
 scipy
+scikit-learn
+matplotlib
+pillow
+pyyaml
+tqdm
+# notebooks and tests
+ipykernel
+nbformat
+nbconvert
+pytest

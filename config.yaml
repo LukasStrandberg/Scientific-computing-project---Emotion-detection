@@ -1,0 +1,128 @@
+# Shared settings for all tracks. Notebooks override a few of these in their first cell;
+# everything else is changed here. Relative paths under `paths` are resolved against the data
+# root (DRIVE_ROOT on Colab, the repository folder locally unless EMO_ROOT is set).
+
+seed: 42
+emotions: [anger, disgust, fear, happiness, sadness, surprise]
+smoke_test: false            # true (or env EMO_SMOKE=1): synthetic data + tiny settings, see common/smoke.py
+
+paths:
+  data: data
+  checkpoints: checkpoints
+  cache: cache
+  results: results
+  elderreact: data/ElderReact_Data            # {train,dev,test}_labels.txt + the videos (any subfolder)
+  patient_videos: data/AlzheimerPatient_Data
+  split_file: splits/elderreact_pooled_seed42.csv   # relative to the repository (shipped with the code)
+  colab_local_cache: /content/emo_cache       # Colab: fast local disk; the cache is kept as one tar on Drive
+
+split:
+  val_frac: 0.15             # share of pooled train+dev used for validation; official test untouched
+  seed: 42
+
+faces:
+  detector: retinaface       # retinaface (shared default) | yolo
+  style: deepface            # deepface: tight box, black padding | square: square region around the face
+  margin: 0.0                # extra border around the face box (0.05 = 5 %)
+  per_clip_box: false        # true: one box for the whole clip (Isak's YOLO protocol), no eye levelling
+  min_score: 0.8             # RetinaFace confidence
+  retinaface_network: resnet50
+  max_size: 640              # frames are downscaled to this long side for detection
+  batch: 32
+  yolo_weights: checkpoints/yolov8n-face.pt
+  yolo_conf: 0.25
+  yolo_imgsz: 640
+
+cache:
+  n_frames: 32               # uniform bin-centre frames stored per clip; models use 16 (even/odd views)
+  size: 224                  # largest model input; each model resizes from here
+  format: jpeg               # jpeg (q=jpeg_quality, ~0.5 GB for ElderReact) | npy (raw uint8, ~6.4 GB)
+  jpeg_quality: 95
+  tar_to_drive: true         # Colab: save/load the cache as one tar under <root>/cache/
+
+clip_len: 16                 # frames per model input
+eval_views: 2                # evaluation averages the even- and odd-frame views
+
+train:
+  warmup_epochs: 1
+  weight_decay: 0.05
+  patience: 8                # early stopping on validation loss (0 = off)
+  pos_weight: true           # BCE positive weights = clip(neg/pos, 1, pos_weight_max), from the train split
+  pos_weight_max: 10
+  grad_clip: 1.0
+  hflip: 0.5
+  amp: true
+  workers: 2
+  max_steps: null            # stop each epoch after this many batches (smoke tests)
+
+s2d:
+  run: finetuned             # results/s2d/<run>; use another name for variants (e.g. finetuned_head)
+  input_size: 224
+  mafw_ckpt: checkpoints/s2d/mafw_split01.pth      # HF cyinen/S2D: MAFW/without_oversampler/split01_checkpoint-best.pth
+  mafw_rows: [0, 4, 5, 6, 9, 10]                   # anger, disgust, fear, happiness, sadness, surprise in MAFW's 11 classes
+  trainable: adapters        # adapters = MCP prompts + TMA adapters + head (official S2D) | head
+  lr: 5.0e-5
+  epochs: 10
+  batch: 2
+  accum: 8                   # effective batch 16
+  eval_batch: 4
+
+maedfer:
+  run: finetuned             # results/maedfer/<run>
+  input_size: 160
+  dfew_ckpt: checkpoints/mae_dfer/dfew_fold1.pth    # MAE-DFER README: DFEW fine-tuned checkpoint (fold 1)
+  pretrained_ckpt: checkpoints/mae_dfer/voxceleb2_checkpoint-49.pth   # only for init: pretrained
+  dfew_classes: [happy, sad, neutral, angry, surprise, disgust, fear]
+  dfew_rows: [3, 5, 6, 0, 1, 4]                    # anger, disgust, fear, happiness, sadness, surprise in DFEW's 7 classes
+  init: dfew                 # dfew (default) | pretrained (VoxCeleb2 self-supervised, new head)
+  freeze: all                # all = head + fc_norm (linear probe, default) | partial | none
+  unfreeze_last_blocks: 2    # for freeze: partial
+  lr_head: 5.0e-4
+  lr_backbone: 5.0e-5
+  drop_path: 0.1             # only used when blocks are trainable
+  epochs: 30
+  batch: 8
+  accum: 1
+  eval_batch: 8
+
+clustering:
+  run: ae_kmeans             # run name; pca_kmeans when embedding: pca
+  source: crop               # crop (shared face cache) | full_frame (same frame indices, whole frame)
+  landmarker: checkpoints/face_landmarker.task
+  embedding: ae              # ae | pca
+  latent_dim: 8
+  hidden: [64, 32]
+  ae_epochs: 300
+  ae_lr: 1.0e-3
+  ae_batch: 256
+  k: auto                    # auto = best silhouette on the training clips | an integer
+  k_range: [2, 12]
+  readout_prior: 1.0         # Laplace smoothing of P(emotion | cluster)
+
+eval:
+  n_boot: 2000
+  boot_seed: 0
+  low_confidence: 0.55       # t-SNE: mark points whose top probability is below this
+  n_examples: 5              # example clips figure
+  gradcam_n: 10
+  decision_rules: false      # extra table: thresholds / top-k decision rules (Isak's RULES)
+
+patient:
+  preset: s2d
+  presets:
+    s2d: {window: 3.0, stride: 1.0, smooth: 5}       # default: matches the 1-5 s training clips
+    maedfer: {window: 1.0, stride: 0.8, smooth: 1}   # Isak's MAE-DFER windows
+  video_glob: "*"
+  min_face: 0.5              # windows with a smaller share of face frames count as "no face"
+  min_score: 0.5             # top (smoothed) probability below this = "no clear emotion"
+  min_segment: 5.0           # seconds; shorter stretches are merged into a neighbour
+  feature_recentering: false # Isak's test-time adaptation (supervised tracks), see mae_dfer/README.md
+  moments: [0.25, 0.5, 0.75] # annotated frames
+  review_fraction: 0.005     # share of windows that get a 4x4 review sheet (at least review_min_per_class)
+  review_min_per_class: 1
+  gradcam_n: 15
+
+plot:
+  titles: false              # captions go in LaTeX; true adds in-figure titles
+  formats: [pdf, png]
+  dpi: 300

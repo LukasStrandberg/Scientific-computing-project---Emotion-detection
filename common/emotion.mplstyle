@@ -1,0 +1,38 @@
+# Figures for a two-column LaTeX report: 3.4 in single column, 7.0 in full width, 8-9 pt serif text.
+# No usetex: STIX fonts (bundled with matplotlib) match Times-like LaTeX body text.
+font.family: serif
+font.serif: STIX Two Text, STIXGeneral, Times New Roman, DejaVu Serif
+mathtext.fontset: stix
+font.size: 8
+axes.titlesize: 9
+axes.labelsize: 8
+xtick.labelsize: 7
+ytick.labelsize: 7
+legend.fontsize: 7
+legend.frameon: False
+legend.handlelength: 1.4
+figure.figsize: 3.4, 2.4
+figure.dpi: 110
+figure.constrained_layout.use: True
+savefig.dpi: 300
+savefig.bbox: tight
+savefig.pad_inches: 0.02
+pdf.fonttype: 42
+ps.fonttype: 42
+axes.spines.top: False
+axes.spines.right: False
+axes.linewidth: 0.6
+axes.edgecolor: 333333
+axes.labelcolor: 222222
+axes.grid: False
+grid.color: E5E5E5
+grid.linewidth: 0.5
+xtick.color: 333333
+ytick.color: 333333
+xtick.major.width: 0.6
+ytick.major.width: 0.6
+xtick.major.size: 2.5
+ytick.major.size: 2.5
+lines.linewidth: 1.0
+lines.markersize: 3.5
+image.cmap: viridis
