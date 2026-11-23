@@ -36,3 +36,6 @@ Understanding in Older Adults.
 
 ## 2026/11/20
 Skrivit lite teori och clustrat per video.
+
+## 2026/11/23
+Arbetar med de modeller vi har för att få bättre prestanda. Undersöker om vi kan använda den begränsade datamängden på ett bättre sätt. 
