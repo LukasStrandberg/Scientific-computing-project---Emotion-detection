@@ -39,3 +39,7 @@ Skrivit lite teori och clustrat per video.
 
 ## 2026/11/23
 Arbetar med de modeller vi har för att få bättre prestanda. Undersöker om vi kan använda den begränsade datamängden på ett bättre sätt. 
+Hade möte med Anders angående anpassad data, han försöker få tillgång via partneruniversitetet. Kollade lite på postern som ska in på fredag.
+
+## 2026/11/25
+Jobbar vidare på att clustra MECO datan och jämföra med vår patient.
